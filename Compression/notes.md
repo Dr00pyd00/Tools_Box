@@ -32,6 +32,8 @@ tar --exclude='.venv' \
 
 ``` 
 
+> TOUJOURS mettre els excludes au debut !!
+
 ## Decompresser:
 
 Dans dossier courant: 
