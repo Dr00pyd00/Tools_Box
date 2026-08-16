@@ -9,4 +9,9 @@ Installer
 pip install redis
 ```
 
+Sauver dans le volume a la main:
+```bash 
+BGSAVE
+```
+
 
