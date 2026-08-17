@@ -85,3 +85,29 @@ CREATE ROLE kida WITH LOGIN PASSWORD 'ton_mot_de_passe' CREATEDB;
 Remplace `'ton_mot_de_passe'` par un mot de passe de ton choix, exécute, puis refais `\du` pour voir les deux rôles côte à côte.
 
 
+## Premiere connexion
+
+
+```bash 
+psql -U kida -d postgres -h localhost  # force auth 
+
+# plus simple si user existe sur la machine:
+psql -d postgres
+
+```
+
+- `-U` = se connecter avec tel user
+- `-d` = choisir sa db : "postgres" est la db creer par defaut 
+
+
+
+### Creer un DB perso 
+
+```bash
+postgres=> CREATE DATABASE testdb;
+
+# ensuite il faut se connecter a la db creer !
+postgres=> \c testdb 
+```
+
+
