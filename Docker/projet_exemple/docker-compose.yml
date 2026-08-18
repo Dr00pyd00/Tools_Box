@@ -1,0 +1,65 @@
+
+services:
+
+# ========================================================================================
+
+  db:
+    # on donne image avec la version ( souvent officiel )
+    image: postgres:16.4
+    # env = la on donne les datas pour la creations du user psql, son mdp etc 
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    # on lit le volume sur la machine a l'endroit ou sont stocker les data dans le container
+    volumes:
+      # [ endroit ou est stocker sur le disk ] : [ endroit defini par limaqge officiel ou sera stocker les donnees postgres ]
+      - exemple_volume:/var/lib/postgresql/data 
+
+    ports:
+      # on branche un port de la machine a un port du container:
+      # [ port de la machine (ecoute) ] : [ port du container ]
+      - "5555:5432" 
+
+      # mettre un healthy: s'assurer que ce service soit lancer avant la suite CAR "depends_on" attend juste que le service ce LANCE:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]  # test livrer avec l'image officielle de psql
+      interval: 2s  # test toutes les 2 sec
+      timeout: 5s   # abandonne l'essai si jamais ca bloque plus de 5 sec
+      retries: 5
+
+
+# ========================================================================================
+
+  app:
+    # dit de chercher le dockerfile du dossier et l'utiliser pour creer une image
+    build: .
+
+    # commande a lancer a chaque demarrage du container
+    command: sleep infinity   # permet de laisser le container ouvert et active meme si le script est fini.
+
+    # veut dire que ca attend que le service nomme tourne en premier
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # env = met dans les variable de limage OS tout ca ( pas de dotenv )
+    environment:
+      POSTGRES_HOST: db  # db est ici une addresse url type google.com
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      # avoir moyen de input si besoin:
+      # stdin_open: true
+
+      # ouvre une console complete si besoin:
+      # tty: true 
+
+# ===================================================================================
+
+# declarer les volumes ici pour leurs creations:
+volumes:
+  exemple_volume:
